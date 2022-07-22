@@ -103,8 +103,34 @@ export const updateUser = async(req: Request, res: Response) => {
 };
 
 /* --------Delete User-------- */
-export const deleteUser = (req: Request, res: Response) => {
+export const deleteUser = async(req: Request, res: Response) => {
     const { id } = req.params;
+
+    try {
+
+        let user = await User.findByPk(id);
+
+        if( !user ) {
+            return res.status(400).json({
+                msg: "There is not any user with that ID",
+            }); 
+        };
+
+        // await user.destroy(); //delete from database
+        await user.update({ status: false });
+
+        res.json({
+            msg: "User Deleted",
+        });
+
+    } catch (error: any) {
+        console.log(error);
+        res.status(500).json({
+            msg: "Talk with the manager",
+
+        });  
+    };
+
 
     res.json({
         msg: "delete User",
